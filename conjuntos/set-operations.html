@@ -382,6 +382,13 @@
             return;
           }
 
+          if (setU.length >= 8) {
+            setError(
+              "Máximo de 8 elementos atingido para o conjunto universal",
+            );
+            return;
+          }
+
           if (setU.includes(inputValue.trim())) {
             setError("Este elemento já existe no conjunto universal");
             return;
@@ -397,12 +404,16 @@
         };
 
         const goToOperations = () => {
-          if (setA.length < 4) {
-            setError("Conjunto A deve ter no mínimo 4 elementos");
+          if (setA.length < 4 || setA.length > 8) {
+            setError("Conjunto A deve ter entre 4 e 8 elementos");
             return;
           }
-          if (setU.length === 0) {
-            setError("Por favor, defina o Conjunto Universal U primeiro");
+          if (setU.length < 4) {
+            setError("Conjunto Universal U deve ter no mínimo 4 elementos");
+            return;
+          }
+          if (setU.length > 8) {
+            setError("Conjunto Universal U deve ter no máximo 8 elementos");
             return;
           }
           setScreen("operations");
@@ -515,7 +526,8 @@
                 <div className="flex flex-wrap items-end gap-4 py-3">
                   <label className="flex flex-col min-w-40 flex-1">
                     <p className="text-gray-900 dark:text-white text-sm font-medium leading-normal pb-2 px-1">
-                      Adicionar Elemento ao Conjunto Universal U
+                      Adicionar Elemento ao Conjunto Universal U ({setU.length}
+                      /8)
                     </p>
                     <div className="flex w-full flex-1 items-stretch rounded-xl overflow-hidden">
                       <input
@@ -561,6 +573,19 @@
                     </p>
                   )}
                 </div>
+
+                {/* Info message about minimum elements */}
+                {setU.length > 0 && setU.length < 4 && (
+                  <p className="text-center text-xs text-amber-600 dark:text-amber-500 pb-3">
+                    ⚠️ Adicione pelo menos {4 - setU.length} elemento(s) para
+                    atingir o mínimo de 4
+                  </p>
+                )}
+                {setU.length === 8 && (
+                  <p className="text-center text-xs text-green-600 dark:text-green-500 pb-3">
+                    ✅ Máximo de elementos atingido (8/8)
+                  </p>
+                )}
 
                 {/* Generator Button Section */}
                 <div className="py-6">
