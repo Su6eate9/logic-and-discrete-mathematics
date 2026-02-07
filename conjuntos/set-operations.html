@@ -42,6 +42,68 @@
         },
       };
     </script>
+    <style>
+      body {
+        font-family: "Lexend", sans-serif;
+      }
+      .material-symbols-outlined,
+      .material-icons-outlined {
+        font-family:
+          "Material Icons Outlined", "Material Symbols Outlined", sans-serif;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        direction: ltr;
+        -webkit-font-feature-settings: "liga";
+        -webkit-font-smoothing: antialiased;
+      }
+      .bounce-in {
+        animation: bounceIn 0.5s ease-out;
+      }
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.3);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .shake {
+        animation: shake 0.5s;
+      }
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        10%,
+        30%,
+        50%,
+        70%,
+        90% {
+          transform: translateX(-5px);
+        }
+        20%,
+        40%,
+        60%,
+        80% {
+          transform: translateX(5px);
+        }
+      }
+    </style>
   </head>
   <body></body>
 </html>
