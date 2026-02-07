@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Set Input &amp; Generation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden max-w-md mx-auto">
+<!-- TopAppBar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+<div class="text-gray-900 dark:text-white flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Set Operations</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 bg-transparent text-gray-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</div>
+<div class="px-4 py-2">
+<!-- HeadlineText -->
+<h3 class="text-gray-900 dark:text-white tracking-light text-2xl font-bold leading-tight pb-2 pt-5">Define Set A</h3>
+<!-- BodyText -->
+<p class="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal pb-3 pt-1">Enter 4-8 elements for your first set to begin. These can be numbers or letters.</p>
+<!-- TextField (Set A Input) -->
+<div class="flex flex-wrap items-end gap-4 py-3">
+<label class="flex flex-col min-w-40 flex-1">
+<p class="text-gray-900 dark:text-white text-sm font-medium leading-normal pb-2 px-1">Add Element</p>
+<div class="flex w-full flex-1 items-stretch rounded-xl overflow-hidden">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1c2331] focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-[#9da6b9] p-[15px] border-r-0 text-base font-normal leading-normal" placeholder="Type element..." value=""/>
+<div class="text-white bg-primary flex items-center justify-center px-4 rounded-r-xl cursor-pointer">
+<span class="material-symbols-outlined">add</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Chips Display for Set A -->
+<div class="flex gap-2 py-4 flex-wrap">
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-200 dark:bg-gray-800 px-4 border border-gray-300 dark:border-gray-700">
+<p class="text-gray-900 dark:text-white text-sm font-medium leading-normal">Alpha</p>
+<span class="material-symbols-outlined text-sm cursor-pointer opacity-60">close</span>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-200 dark:bg-gray-800 px-4 border border-gray-300 dark:border-gray-700">
+<p class="text-gray-900 dark:text-white text-sm font-medium leading-normal">Beta</p>
+<span class="material-symbols-outlined text-sm cursor-pointer opacity-60">close</span>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-200 dark:bg-gray-800 px-4 border border-gray-300 dark:border-gray-700">
+<p class="text-gray-900 dark:text-white text-sm font-medium leading-normal">14</p>
+<span class="material-symbols-outlined text-sm cursor-pointer opacity-60">close</span>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-200 dark:bg-gray-800 px-4 border border-gray-300 dark:border-gray-700">
+<p class="text-gray-900 dark:text-white text-sm font-medium leading-normal">42</p>
+<span class="material-symbols-outlined text-sm cursor-pointer opacity-60">close</span>
+</div>
+</div>
+<!-- Generator Button Section -->
+<div class="py-6">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                    Generate Set B
+                </button>
+<p class="text-center text-xs text-gray-500 dark:text-gray-500 mt-3">Matches the type and size of Set A</p>
+</div>
+<!-- Result Cards -->
+<div class="space-y-4 pb-10">
+<!-- Card for Set A -->
+<div class="bg-white dark:bg-[#1c2331] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-primary font-bold text-lg">Set A</h4>
+<span class="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded-full">4 elements</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-800 dark:text-gray-200 font-medium border border-gray-200 dark:border-gray-700">Alpha</div>
+<div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-800 dark:text-gray-200 font-medium border border-gray-200 dark:border-gray-700">Beta</div>
+<div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-800 dark:text-gray-200 font-medium border border-gray-200 dark:border-gray-700">14</div>
+<div class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-800 dark:text-gray-200 font-medium border border-gray-200 dark:border-gray-700">42</div>
+</div>
+</div>
+<!-- Card for Set B (Generated State) -->
+<div class="bg-white dark:bg-[#1c2331] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2">
+<span class="material-symbols-outlined text-primary/40 text-4xl opacity-20">casino</span>
+</div>
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-primary font-bold text-lg">Set B (Generated)</h4>
+<span class="text-xs font-medium px-2 py-1 bg-green-500/10 text-green-500 rounded-full">4 elements</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<div class="px-4 py-2 bg-primary/5 dark:bg-primary/20 rounded-lg text-sm text-primary dark:text-primary font-bold border border-primary/20">Gamma</div>
+<div class="px-4 py-2 bg-primary/5 dark:bg-primary/20 rounded-lg text-sm text-primary dark:text-primary font-bold border border-primary/20">Delta</div>
+<div class="px-4 py-2 bg-primary/5 dark:bg-primary/20 rounded-lg text-sm text-primary dark:text-primary font-bold border border-primary/20">99</div>
+<div class="px-4 py-2 bg-primary/5 dark:bg-primary/20 rounded-lg text-sm text-primary dark:text-primary font-bold border border-primary/20">7</div>
+</div>
+</div>
+</div>
+<!-- Navigation/Action Footer for Set Ops -->
+<div class="flex gap-4 pb-12">
+<button class="flex-1 py-3 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl font-semibold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">restart_alt</span>
+                    Reset
+                </button>
+<button class="flex-1 py-3 bg-primary text-white rounded-xl font-semibold flex items-center justify-center gap-2">
+                    Next
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>
