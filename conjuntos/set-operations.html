@@ -105,5 +105,827 @@
       }
     </style>
   </head>
-  <body></body>
+  <body class="bg-background-light dark:bg-background-dark min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const setOperations = {
+        union: (setA, setB) => {
+          return [...new Set([...setA, ...setB])];
+        },
+        intersection: (setA, setB) => {
+          return setA.filter((item) => setB.includes(item));
+        },
+        difference: (setA, setB) => {
+          return setA.filter((item) => !setB.includes(item));
+        },
+        complement: (setA, universal) => {
+          return universal.filter((item) => !setA.includes(item));
+        },
+        symmetricDifference: (setA, setB) => {
+          const diff1 = setA.filter((item) => !setB.includes(item));
+          const diff2 = setB.filter((item) => !setA.includes(item));
+          return [...diff1, ...diff2];
+        },
+        cartesianProduct: (setA, setB) => {
+          const result = [];
+          setA.forEach((a) => {
+            setB.forEach((b) => {
+              result.push(`(${a}, ${b})`);
+            });
+          });
+          return result;
+        },
+        inclusion: (setA, setB) => {
+          return setA.every((item) => setB.includes(item));
+        },
+      };
+
+      const generateRandomSet = () => {
+        const size = Math.floor(Math.random() * 5) + 4;
+
+        const palavrasPtBr = [
+          "sol",
+          "lua",
+          "mar",
+          "céu",
+          "terra",
+          "água",
+          "fogo",
+          "vento",
+          "livro",
+          "casa",
+          "jardim",
+          "árvore",
+          "flor",
+          "fruto",
+          "raiz",
+          "amor",
+          "paz",
+          "vida",
+          "alma",
+          "coração",
+          "sonho",
+          "alegria",
+          "estrela",
+          "planeta",
+          "universo",
+          "galáxia",
+          "cosmos",
+          "átomo",
+          "música",
+          "dança",
+          "arte",
+          "pintura",
+          "poesia",
+          "canção",
+          "montanha",
+          "rio",
+          "lago",
+          "praia",
+          "floresta",
+          "campo",
+          "tempo",
+          "espaço",
+          "luz",
+          "sombra",
+          "cor",
+          "forma",
+          "cidade",
+          "país",
+          "nação",
+          "mundo",
+          "continente",
+          "oceano",
+          "amigo",
+          "família",
+          "mãe",
+          "pai",
+          "irmão",
+          "irmã",
+          "conhecimento",
+          "sabedoria",
+          "razão",
+          "emoção",
+          "sentimento",
+          "café",
+          "pão",
+          "açúcar",
+          "sal",
+          "mel",
+          "leite",
+          "cachorro",
+          "gato",
+          "pássaro",
+          "peixe",
+          "borboleta",
+          "abelha",
+          "janeiro",
+          "março",
+          "maio",
+          "junho",
+          "agosto",
+          "outubro",
+          "segunda",
+          "terça",
+          "quarta",
+          "quinta",
+          "sexta",
+          "sábado",
+          "manhã",
+          "tarde",
+          "noite",
+          "aurora",
+          "crepúsculo",
+          "amanhecer",
+        ];
+
+        const alfabetoPtBr = [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h",
+          "i",
+          "j",
+          "k",
+          "l",
+          "m",
+          "n",
+          "o",
+          "p",
+          "q",
+          "r",
+          "s",
+          "t",
+          "u",
+          "v",
+          "w",
+          "x",
+          "y",
+          "z",
+          "á",
+          "à",
+          "â",
+          "ã",
+          "é",
+          "ê",
+          "í",
+          "ó",
+          "ô",
+          "õ",
+          "ú",
+          "ü",
+          "ç",
+        ];
+
+        const tipo = Math.floor(Math.random() * 4);
+
+        const elements = new Set();
+
+        while (elements.size < size) {
+          if (tipo === 0) {
+            elements.add(Math.floor(Math.random() * 100));
+          } else if (tipo === 1) {
+            elements.add(
+              alfabetoPtBr[Math.floor(Math.random() * alfabetoPtBr.length)],
+            );
+          } else if (tipo === 2) {
+            elements.add(
+              palavrasPtBr[Math.floor(Math.random() * palavrasPtBr.length)],
+            );
+          } else {
+            const escolha = Math.random();
+            if (escolha < 0.33) {
+              elements.add(Math.floor(Math.random() * 100));
+            } else if (escolha < 0.66) {
+              elements.add(
+                alfabetoPtBr[Math.floor(Math.random() * alfabetoPtBr.length)],
+              );
+            } else {
+              elements.add(
+                palavrasPtBr[Math.floor(Math.random() * palavrasPtBr.length)],
+              );
+            }
+          }
+        }
+
+        return Array.from(elements);
+      };
+
+      function SetOperationsApp() {
+        const [screen, setScreen] = useState("input");
+        const [setA, setSetA] = useState([]);
+        const [setU, setSetU] = useState([]);
+        const [inputValue, setInputValue] = useState("");
+        const [selectedOperation, setSelectedOperation] = useState("union");
+        const [result, setResult] = useState([]);
+        const [error, setError] = useState("");
+        const [isDarkMode, setIsDarkMode] = useState(true);
+
+        useEffect(() => {
+          document.documentElement.classList.toggle("dark", isDarkMode);
+        }, [isDarkMode]);
+
+        useEffect(() => {
+          if (setA.length > 0 && setU.length > 0) {
+            calculateResult();
+          }
+        }, [selectedOperation, setA, setU]);
+
+        const calculateResult = () => {
+          let res;
+          switch (selectedOperation) {
+            case "union":
+              res = setOperations.union(setA, setU);
+              break;
+            case "intersection":
+              res = setOperations.intersection(setA, setU);
+              break;
+            case "difference":
+              res = setOperations.difference(setA, setU);
+              break;
+            case "complement":
+              res = setOperations.complement(setA, setU);
+              break;
+            case "symmetricDifference":
+              res = setOperations.symmetricDifference(setA, setU);
+              break;
+            case "cartesianProduct":
+              res = setOperations.cartesianProduct(setA, setU);
+              break;
+            case "inclusion":
+              res = setOperations.inclusion(setA, setU)
+                ? ["Verdadeiro: A ⊆ U"]
+                : ["Falso: A ⊄ U"];
+              break;
+            default:
+              res = [];
+          }
+          setResult(res);
+        };
+
+        const generateSets = () => {
+          const generatedA = generateRandomSet();
+          setSetA(generatedA);
+          setError("");
+        };
+
+        const addToUniversal = () => {
+          if (!inputValue.trim()) {
+            setError("Por favor, digite um elemento válido");
+            return;
+          }
+
+          if (setU.includes(inputValue.trim())) {
+            setError("Este elemento já existe no conjunto universal");
+            return;
+          }
+
+          setSetU([...setU, inputValue.trim()]);
+          setInputValue("");
+          setError("");
+        };
+
+        const removeFromUniversal = (index) => {
+          setSetU(setU.filter((_, i) => i !== index));
+        };
+
+        const goToOperations = () => {
+          if (setA.length < 4) {
+            setError("Conjunto A deve ter no mínimo 4 elementos");
+            return;
+          }
+          if (setU.length === 0) {
+            setError("Por favor, defina o Conjunto Universal U primeiro");
+            return;
+          }
+          setScreen("operations");
+          calculateResult();
+        };
+
+        const reset = () => {
+          setSetA([]);
+          setSetU([]);
+          setInputValue("");
+          setError("");
+          setResult([]);
+          setScreen("input");
+        };
+
+        const getOperationSymbol = () => {
+          switch (selectedOperation) {
+            case "union":
+              return "A ∪ U";
+            case "intersection":
+              return "A ∩ U";
+            case "difference":
+              return "A - U";
+            case "complement":
+              return "A'";
+            case "symmetricDifference":
+              return "A Δ U";
+            case "cartesianProduct":
+              return "A × U";
+            case "inclusion":
+              return "A ⊆ U";
+            default:
+              return "";
+          }
+        };
+
+        const getOperationName = () => {
+          switch (selectedOperation) {
+            case "union":
+              return "União";
+            case "intersection":
+              return "Interseção";
+            case "difference":
+              return "Diferença";
+            case "complement":
+              return "Complementar de A";
+            case "symmetricDifference":
+              return "Diferença Simétrica";
+            case "cartesianProduct":
+              return "Produto Cartesiano";
+            case "inclusion":
+              return "Inclusão (A está contido em U?)";
+            default:
+              return "";
+          }
+        };
+
+        if (screen === "input") {
+          return (
+            <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark max-w-md mx-auto">
+              {/* TopAppBar */}
+              <div className="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+                <div className="text-gray-900 dark:text-white flex size-12 shrink-0 items-center justify-center">
+                  <span className="material-symbols-outlined opacity-0">
+                    arrow_back_ios
+                  </span>
+                </div>
+                <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
+                  Operações de Conjuntos
+                </h2>
+                <div className="flex w-12 items-center justify-end">
+                  <button
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 bg-transparent text-gray-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0"
+                  >
+                    <span className="material-symbols-outlined">
+                      {isDarkMode ? "light_mode" : "dark_mode"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="px-4 py-2">
+                {/* HeadlineText */}
+                <h3 className="text-gray-900 dark:text-white tracking-light text-2xl font-bold leading-tight pb-2 pt-5">
+                  Defina o Conjunto A
+                </h3>
+
+                {/* BodyText */}
+                <p className="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal pb-3 pt-1">
+                  Insira de 4 a 8 elementos para o seu conjunto. Podem ser
+                  números, letras ou palavras.
+                </p>
+
+                {/* Error Message */}
+                {error && (
+                  <div
+                    className={`mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-sm shake`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm">
+                        error
+                      </span>
+                      <span>{error}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* TextField (Set U Input) */}
+                <div className="flex flex-wrap items-end gap-4 py-3">
+                  <label className="flex flex-col min-w-40 flex-1">
+                    <p className="text-gray-900 dark:text-white text-sm font-medium leading-normal pb-2 px-1">
+                      Adicionar Elemento ao Conjunto Universal U
+                    </p>
+                    <div className="flex w-full flex-1 items-stretch rounded-xl overflow-hidden">
+                      <input
+                        className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-xl text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1c2331] focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-[#9da6b9] p-[15px] border-r-0 text-base font-normal leading-normal"
+                        placeholder="Digite um elemento..."
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && addToUniversal()
+                        }
+                      />
+                      <button
+                        onClick={addToUniversal}
+                        className="text-white bg-primary hover:bg-primary/90 flex items-center justify-center px-4 rounded-r-xl cursor-pointer transition-all active:scale-95"
+                      >
+                        <span className="material-symbols-outlined">add</span>
+                      </button>
+                    </div>
+                  </label>
+                </div>
+
+                {/* Chips Display for Set U */}
+                <div className="flex gap-2 py-4 flex-wrap min-h-[60px]">
+                  {setU.map((element, index) => (
+                    <div
+                      key={index}
+                      className="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-200 dark:bg-gray-800 px-4 border border-gray-300 dark:border-gray-700 bounce-in"
+                    >
+                      <p className="text-gray-900 dark:text-white text-sm font-medium leading-normal">
+                        {element}
+                      </p>
+                      <span
+                        onClick={() => removeFromUniversal(index)}
+                        className="material-symbols-outlined text-sm cursor-pointer opacity-60 hover:opacity-100 hover:text-red-500 transition-all"
+                      >
+                        close
+                      </span>
+                    </div>
+                  ))}
+                  {setU.length === 0 && (
+                    <p className="text-gray-400 dark:text-gray-600 text-sm italic">
+                      Nenhum elemento adicionado ao conjunto universal ainda
+                    </p>
+                  )}
+                </div>
+
+                {/* Generator Button Section */}
+                <div className="py-6">
+                  <button
+                    onClick={generateSets}
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                  >
+                    <span className="material-symbols-outlined">
+                      auto_fix_high
+                    </span>
+                    Gerar Conjunto A Aleatoriamente
+                  </button>
+                  <p className="text-center text-xs text-gray-500 dark:text-gray-500 mt-3">
+                    Gera um conjunto totalmente aleatório com 4-8 elementos
+                  </p>
+                </div>
+
+                {/* Result Cards */}
+                {setA.length >= 4 && (
+                  <div className="space-y-4 pb-10">
+                    {/* Card for Set A */}
+                    <div className="bg-white dark:bg-[#1c2331] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden bounce-in">
+                      <div className="absolute top-0 right-0 p-2">
+                        <span className="material-symbols-outlined text-primary/40 text-4xl opacity-20">
+                          casino
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-primary font-bold text-lg">
+                          Conjunto A (Gerado)
+                        </h4>
+                        <span className="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded-full">
+                          {setA.length} elementos
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {setA.map((element, index) => (
+                          <div
+                            key={index}
+                            className="px-4 py-2 bg-primary/5 dark:bg-primary/20 rounded-lg text-sm text-primary dark:text-primary font-bold border border-primary/20"
+                          >
+                            {element}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Card for Set U */}
+                    {setU.length > 0 && (
+                      <div className="bg-white dark:bg-[#1c2331] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+                        <div className="flex justify-between items-center mb-4">
+                          <h4 className="text-indigo-500 font-bold text-lg">
+                            Conjunto Universal U
+                          </h4>
+                          <span className="text-xs font-medium px-2 py-1 bg-green-500/10 text-green-500 rounded-full">
+                            {setU.length} elementos
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {setU.map((element, index) => (
+                            <div
+                              key={index}
+                              className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-800 dark:text-gray-200 font-medium border border-gray-200 dark:border-gray-700"
+                            >
+                              {element}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Navigation/Action Footer */}
+                {setU.length > 0 && setA.length > 0 && (
+                  <div className="flex gap-4 pb-12">
+                    <button
+                      onClick={reset}
+                      className="flex-1 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all active:scale-95"
+                    >
+                      <span className="material-symbols-outlined">
+                        restart_alt
+                      </span>
+                      Resetar
+                    </button>
+                    <button
+                      onClick={goToOperations}
+                      className="flex-1 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all active:scale-95"
+                    >
+                      Próximo
+                      <span className="material-symbols-outlined">
+                        arrow_forward
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+            {/* Top Navigation Bar */}
+            <div className="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+              <div className="flex items-center p-4 pb-2 justify-between max-w-md mx-auto">
+                <button
+                  onClick={() => setScreen("input")}
+                  className="text-primary flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 hover:bg-primary/20 transition-all cursor-pointer"
+                >
+                  <span className="material-symbols-outlined">
+                    arrow_back_ios_new
+                  </span>
+                </button>
+                <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">
+                  Operações de Conjuntos
+                </h2>
+              </div>
+            </div>
+
+            <main className="max-w-md mx-auto px-4 pb-12 w-full">
+              {/* Section: Defined Sets */}
+              <h3 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-2 pt-6">
+                Conjuntos Definidos
+              </h3>
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="flex flex-col gap-3 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="w-full bg-primary/20 flex items-center justify-center aspect-square rounded-lg border-2 border-dashed border-primary/30 relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span className="text-4xl font-bold text-primary">A</span>
+                  </div>
+                  <div>
+                    <p className="text-gray-900 dark:text-white text-base font-medium leading-normal">
+                      Conjunto A
+                    </p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">
+                      {"{" + setA.join(", ") + "}"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="w-full bg-indigo-500/20 flex items-center justify-center aspect-square rounded-lg border-2 border-dashed border-indigo-500/30 relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span className="text-4xl font-bold text-indigo-500">
+                      U
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-gray-900 dark:text-white text-base font-medium leading-normal">
+                      Conjunto Universal U
+                    </p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">
+                      {"{" + setU.join(", ") + "}"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section: Operation Selection */}
+              <h3 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-2 pt-2">
+                Operação
+              </h3>
+              <div className="flex flex-col gap-3 py-3 mb-6">
+                {/* First row of operations */}
+                <div className="flex h-14 flex-1 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 p-1.5 shadow-inner">
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-xl font-bold leading-normal transition-all duration-200 ${selectedOperation === "union" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">∪</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="union"
+                      checked={selectedOperation === "union"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-xl font-bold leading-normal transition-all duration-200 ${selectedOperation === "intersection" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">∩</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="intersection"
+                      checked={selectedOperation === "intersection"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-sm font-bold leading-normal transition-all duration-200 ${selectedOperation === "difference" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">A-U</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="difference"
+                      checked={selectedOperation === "difference"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-sm font-bold leading-normal transition-all duration-200 ${selectedOperation === "complement" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">A'</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="complement"
+                      checked={selectedOperation === "complement"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                </div>
+                {/* Second row of operations */}
+                <div className="flex h-14 flex-1 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 p-1.5 shadow-inner">
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-xl font-bold leading-normal transition-all duration-200 ${selectedOperation === "symmetricDifference" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">△</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="symmetricDifference"
+                      checked={selectedOperation === "symmetricDifference"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-xl font-bold leading-normal transition-all duration-200 ${selectedOperation === "cartesianProduct" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">×</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="cartesianProduct"
+                      checked={selectedOperation === "cartesianProduct"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                  <label
+                    className={`flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 text-xl font-bold leading-normal transition-all duration-200 ${selectedOperation === "inclusion" ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400"}`}
+                  >
+                    <span className="truncate">⊆</span>
+                    <input
+                      className="invisible w-0"
+                      type="radio"
+                      name="set-op"
+                      value="inclusion"
+                      checked={selectedOperation === "inclusion"}
+                      onChange={(e) => setSelectedOperation(e.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Section: Visual Illustration */}
+              <div className="bg-white dark:bg-slate-800/30 rounded-xl p-8 mb-6 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                <div className="relative w-48 h-32 flex items-center justify-center">
+                  {/* Set A Circle */}
+                  <div
+                    className={`absolute left-0 w-32 h-32 rounded-full border-2 border-primary mix-blend-screen transition-all duration-300 ${
+                      selectedOperation === "union" ||
+                      selectedOperation === "difference"
+                        ? "bg-primary/30"
+                        : selectedOperation === "intersection"
+                          ? "bg-primary/10"
+                          : "bg-primary/20"
+                    }`}
+                  ></div>
+                  {/* Set B Circle */}
+                  <div
+                    className={`absolute right-0 w-32 h-32 rounded-full border-2 border-indigo-500 mix-blend-screen transition-all duration-300 ${
+                      selectedOperation === "union"
+                        ? "bg-indigo-500/30"
+                        : selectedOperation === "intersection"
+                          ? "bg-indigo-500/10"
+                          : selectedOperation === "complement"
+                            ? "bg-indigo-500/10"
+                            : "bg-indigo-500/20"
+                    }`}
+                  ></div>
+                  {/* Venn Labels */}
+                  <span className="absolute left-8 text-primary font-bold z-10">
+                    A
+                  </span>
+                  <span className="absolute right-8 text-indigo-500 font-bold z-10">
+                    U
+                  </span>
+                </div>
+                <p className="mt-6 text-sm text-slate-500 dark:text-slate-400 italic">
+                  Visualizando: {getOperationName()} ({getOperationSymbol()})
+                </p>
+              </div>
+
+              {/* Section: Results */}
+              <div className="p-6 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-bold text-primary">
+                    Conjunto Resultante
+                  </h4>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(result.join(", "));
+                        alert("Resultado copiado!");
+                      }}
+                      className="size-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-primary transition-colors border border-slate-200 dark:border-slate-700"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        content_copy
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <span className="text-2xl font-bold text-slate-700 dark:text-slate-200 mr-1">
+                    {"{"}
+                  </span>
+                  {result.length > 0 ? (
+                    result.map((element, index) => (
+                      <div
+                        key={index}
+                        className="px-4 py-2 bg-primary text-white rounded-full font-bold text-lg shadow-lg shadow-primary/20 bounce-in"
+                      >
+                        {element}
+                      </div>
+                    ))
+                  ) : (
+                    <span className="text-slate-500 dark:text-slate-400 italic">
+                      ∅ (conjunto vazio)
+                    </span>
+                  )}
+                  <span className="text-2xl font-bold text-slate-700 dark:text-slate-200 ml-1">
+                    {"}"}
+                  </span>
+                </div>
+                <p className="mt-4 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-semibold">
+                  Cardinalidade: n({getOperationSymbol()}) = {result.length}
+                </p>
+              </div>
+
+              {/* Footer Action */}
+              <div className="mt-8 space-y-3">
+                <button
+                  onClick={reset}
+                  className="w-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-white font-bold py-4 rounded-full transition-transform active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined">restart_alt</span>
+                  Novo Cálculo
+                </button>
+              </div>
+            </main>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<SetOperationsApp />, document.getElementById("root"));
+    </script>
+  </body>
 </html>
