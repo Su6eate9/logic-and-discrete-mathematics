@@ -185,5 +185,25 @@ Este projeto é de código aberto para fins educacionais.
 
 ---
 
+## Revisão de Conteúdo
+
+> **Nota**: Este PR tem como objetivo a **revisão do conteúdo** da pasta `conjuntos/`.
+>
+> ### O que está sendo revisado
+>
+> - `set-operations.html`: Aplicação web interativa para operações de conjuntos (União, Interseção, Diferença, Complementar, Diferença Simétrica, Produto Cartesiano e Inclusão).
+> - `README.md`: Documentação da aplicação com guia de uso, design system e tecnologias utilizadas.
+>
+> ### Como validar
+>
+> 1. Abra o arquivo `conjuntos/set-operations.html` em um navegador moderno.
+> 2. Verifique se as sete operações matemáticas funcionam corretamente.
+> 3. Teste a geração aleatória do Conjunto A.
+> 4. Insira elementos manualmente no Conjunto U e realize as operações.
+> 5. Confirme que os diagramas de Venn são exibidos corretamente.
+> 6. Valide o comportamento no modo escuro/claro.
+
+---
+
 **Desenvolvido para**: UFMA - Lógica e Matemática Discreta
 **Ano**: 2026
